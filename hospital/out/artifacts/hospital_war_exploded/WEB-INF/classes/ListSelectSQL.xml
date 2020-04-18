@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template>
+    <sqltemplate key="equi_month_select">
+        <![CDATA[
+        DECLARE @month NVARCHAR(20)
+        DECLARE @store NVARCHAR(20)
+        SET @month=?
+        SET @store=?
+        DECLARE @in_money MONEY
+        SET @in_money=(SELECT SUM(price) FROM dbo.equi_card WHERE SUBSTRING(CONVERT(NVARCHAR(10),in_date,120),0,8)=@month AND (store_code=@store OR @store=''))
+        DECLARE @out_money MONEY
+        SET @out_money=(SELECT SUM(price) out_money FROM dbo.equi_out LEFT JOIN dbo.equi_card ON equi_card.out_no = equi_out.out_no WHERE SUBSTRING(CONVERT(NVARCHAR(10),out_date,120),0,8)=@month AND equi_out.state=1 AND (dbo.equi_card.store_code=@store OR @store=''))
+        DECLARE @draw_money MONEY
+        SET @draw_money=(SELECT SUM(price) draw_money FROM dbo.equi_card WHERE SUBSTRING(CONVERT(NVARCHAR(10),draw_date,120),0,8)=@month AND state=2 AND (store_code=@store OR @store=''))
+        select @in_money in_money,@out_money out_money,isnull(@draw_money,0) draw_money
+    	]]>
+    </sqltemplate>
+    <sqltemplate key="equi_in_detail">
+        <![CDATA[
+        DECLARE @month NVARCHAR(20)
+        DECLARE @store NVARCHAR(20)
+        SET @month=?
+        SET @store=?
+        SELECT dbo.equi_card.in_no,equi_name,price,prin_emp,ven_name,  CASE state WHEN 0 THEN '在库' WHEN 1 THEN '退库' WHEN 2 THEN '科室领用' WHEN 3  THEN '已处置' END  AS state,SUBSTRING(CONVERT(NVARCHAR(10),in_date,120),0,8) in_date FROM dbo.equi_card
+                 LEFT JOIN dbo.equi_dict ON equi_dict.equi_code = equi_card.equi_code
+                 LEFT JOIN dbo.sys_vendor ON sys_vendor.ven_code = equi_card.ven_code
+        WHERE (SUBSTRING(CONVERT(NVARCHAR(10),in_date,120),0,8)=@month or @month='') AND (store_code=@store OR @store='')
+    	]]>
+    </sqltemplate>
+    <sqltemplate key="dept_draw_list">
+        <![CDATA[
+        DECLARE @month NVARCHAR(20)
+        DECLARE @store NVARCHAR(20)
+        SET @month=?
+        SET @store=?
+        SELECT dbo.equi_card.draw_no,equi_name,store_name,dept_name,SUBSTRING(CONVERT(NVARCHAR(10),draw_date,120),0,8) draw_date,create_emp FROM dbo.equi_card
+                         LEFT JOIN dbo.equi_dict ON equi_dict.equi_code = equi_card.equi_code
+                         LEFT JOIN dbo.sys_store ON sys_store.store_code = equi_card.store_code
+                         LEFT JOIN dbo.sys_dept ON draw_dept=dept_code
+                         LEFT JOIN  dbo.equi_draw ON equi_draw.draw_no = equi_card.draw_no
+        WHERE (SUBSTRING(CONVERT(NVARCHAR(10),in_date,120),0,8)=@month or @month='') AND (dbo.equi_card.store_code=@store OR @store='') AND dbo.equi_card.state=2
+    	]]>
+    </sqltemplate>
+</template>

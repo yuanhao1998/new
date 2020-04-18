@@ -1,0 +1,35 @@
+/******************动态加载下拉列表*****************/
+ul{
+    list-style: none !important;
+    background-color: #ffffff !important;
+    width: 172px !important;
+    padding-left: 0px !important;
+}
+ul > li {
+    height: 35px !important;
+    line-height: 35px !important;
+    text-indent: .2rem;
+    border-left: 1px solid #000;
+    border-right: 1px solid #000;
+}
+ul > li:hover {
+    background: #ccc;
+}
+.ui-helper-hidden-accessible{
+    display: none !important;
+}
+
+
+
+/*****************重写button********************/
+button {
+    width: 75px;
+    height: 25px;
+    border: medium none;
+    border-radius: 2px;
+    background: lightskyblue none repeat scroll 0% 0%;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+

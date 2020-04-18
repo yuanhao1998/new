@@ -1,0 +1,28 @@
+.title tr {
+    height: 60px;
+}
+span{
+    display: inline-block;
+    width: 250px;
+    text-align: left;
+    position: relative;
+    left: 20px;
+}
+#name{
+    height: 40px;
+    background-color: lightskyblue;
+    text-align: center;
+    left: 0px;
+}
+#value{
+    height: 40px;
+    background-color: lightskyblue;
+    text-align: center;
+    left: 0px;
+}
+
+#is_stop{
+    position: relative;
+    left: 20px;
+}
+

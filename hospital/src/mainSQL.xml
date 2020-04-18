@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template>
+<!--    入库单号-->
+    <sqltemplate key="depotIn_insert">
+        <![CDATA[
+            SELECT MAX(in_no) FROM dbo.equi_in
+    	]]>
+    </sqltemplate>
+<!--    退库单号-->
+    <sqltemplate key="depotOut_insert">
+        <![CDATA[
+            SELECT MAX(out_no) FROM dbo.equi_out
+    	]]>
+    </sqltemplate>
+<!--    领用单号-->
+    <sqltemplate key="depotDraw_insert">
+        <![CDATA[
+            SELECT MAX(draw_no) FROM dbo.equi_draw
+    	]]>
+    </sqltemplate>
+<!--    处置单号-->
+    <sqltemplate key="scrap_insert">
+        <![CDATA[
+            SELECT MAX(scrap_no) FROM dbo.equi_scrap
+    	]]>
+    </sqltemplate>
+    <!--    供应商编码-->
+    <sqltemplate key="vendor_insert">
+        <![CDATA[
+            SELECT MAX(ven_code) FROM dbo.sys_vendor
+    	]]>
+    </sqltemplate>
+<!--    部门编码-->
+    <sqltemplate key="dept_insert">
+        <![CDATA[
+            SELECT MAX(dept_code) FROM dbo.sys_dept
+    	]]>
+    </sqltemplate>
+<!--    资产编码-->
+    <sqltemplate key="equi_insert">
+        <![CDATA[
+            SELECT MAX(equi_code) FROM dbo.equi_dict
+    	]]>
+    </sqltemplate>
+
+
+
+
+
+
+<!--    供应商查询-->
+    <sqltemplate key="vendor">
+        <![CDATA[
+          DECLARE @ven_name NVARCHAR(40)
+          SET @ven_name = ?
+          SELECT ven_code as code,ven_name as name  FROM dbo.sys_vendor WHERE (ven_name LIKE '%'+@ven_name+'%'  OR  @ven_name='' OR ven_code LIKE '%'+@ven_name+'%') and is_stop = 0
+    	]]>
+    </sqltemplate>
+<!--    仓库查询-->
+    <sqltemplate key="store">
+        <![CDATA[
+          DECLARE @store_name NVARCHAR(40)
+          SET @store_name = ?
+          SELECT store_code as code,store_name as name,spell FROM dbo.sys_store WHERE (store_name LIKE '%'+@store_name+'%' OR @store_name='' OR spell LIKE '%'+@store_name+'%' OR store_code LIKE '%'+@store_name+'%') and is_stop = 0
+    	]]>
+    </sqltemplate>
+<!--    部门查询-->
+    <sqltemplate key="dept">
+        <![CDATA[
+          DECLARE @dept_name NVARCHAR(20)
+          SET @dept_name=?
+          SELECT dept_code AS code,dept_name AS name,spell FROM dbo.sys_dept WHERE (dept_code LIKE '%'+@dept_name+'%' OR dept_name LIKE '%'+@dept_name+'%' OR @dept_name='' OR spell LIKE '%'+@dept_name+'%') and is_stop = 0
+    	]]>
+    </sqltemplate>
+<!--    资产查询-->
+    <sqltemplate key="equi_code">
+        <![CDATA[
+          DECLARE @equi_name NVARCHAR(40)
+          SET @equi_name = ?
+          SELECT equi_code as code,equi_name as name FROM dbo.equi_dict WHERE (equi_name LIKE '%'+@equi_name+'%' OR @equi_name='' OR spell LIKE '%'+@equi_name+'%' OR equi_code LIKE '%'+@equi_name+'%') and is_stop = 0
+    	]]>
+    </sqltemplate>
+<!--    供应商类型查询-->
+    <sqltemplate key="ven_type">
+        <![CDATA[
+          DECLARE @ven_type_name NVARCHAR(40)
+          SET @ven_type_name = ?
+          SELECT ven_type_code as code,ven_type_name as name,spell FROM dbo.sys_vendor_type WHERE (ven_type_name LIKE '%'+@ven_type_name+'%' OR @ven_type_name='' OR spell LIKE '%'+@ven_type_name+'%' OR ven_type_code LIKE '%'+@ven_type_name+'%') and is_stop = 0
+    	]]>
+    </sqltemplate>
+<!--    资产类型查询-->
+    <sqltemplate key="equi_type">
+        <![CDATA[
+          DECLARE @equi_type_name NVARCHAR(20)
+          SET @equi_type_name=?
+          SELECT equi_type_code AS code,equi_type_name AS name  FROM dbo.equi_type WHERE (equi_type_code LIKE '%'+@equi_type_name+'%' OR equi_type_name LIKE '%'+@equi_type_name+'%' OR @equi_type_name='' OR spell LIKE '%'+@equi_type_name+'%') and is_stop = 0
+    	]]>
+    </sqltemplate>
+    <!--    计量单位查询-->
+    <sqltemplate key="unit">
+        <![CDATA[
+          DECLARE @unit_name NVARCHAR(20)
+          SET @unit_name=?
+          SELECT unit_code AS code,unit_name AS name,spell FROM dbo.sys_unit WHERE (unit_code LIKE '%'+@unit_name+'%' OR unit_name LIKE '%'+@unit_name+'%' OR @unit_name='' OR spell LIKE '%'+@unit_name+'%') and is_stop = 0
+    	]]>
+    </sqltemplate>
+</template>

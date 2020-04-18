@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template>
+<!--    查询入库单-->
+    <sqltemplate key="depotIn_select">
+        <![CDATA[
+			DECLARE @bdate DATETIME
+            DECLARE @edate DATETIME
+            DECLARE @in_id NVARCHAR(20)
+            DECLARE @vendor NVARCHAR(20)
+            DECLARE @store NVARCHAR(20)
+            DECLARE @state TINYINT
+            DECLARE @equi_type NVARCHAR(20)
+            DECLARE @create NVARCHAR(20)
+            SET @bdate = ?
+            SET @edate = ?
+            SET @in_id = ?
+            SET @vendor = ?
+            SET @store = ?
+            SET @state = ?
+            SET @create = ?
+            SELECT in_no,store_name,ven_name,buyer,create_emp,create_date,
+                   CASE state WHEN 0 THEN '新建' WHEN 1 THEN '已审核' WHEN 2 THEN '消审' WHEN 3 THEN '已生成' END AS state,
+                   audit_emp,maker
+                    FROM dbo.equi_in
+            LEFT JOIN dbo.sys_store ON sys_store.store_code = equi_in.store_code
+            LEFT JOIN dbo.sys_vendor ON sys_vendor.ven_code = equi_in.ven_code
+            WHERE ((create_date BETWEEN @bdate AND @edate)OR(@bdate='' AND create_date < CONVERT(DATETIME,@edate))OR(@edate=''AND create_date>CONVERT(DATETIME,@bdate)))
+                  AND(in_no=@in_id OR @in_id='')AND (equi_in.ven_code=@vendor OR @vendor='')AND(equi_in.store_code=@store OR @store='')AND (state=@state OR @state='')
+                  AND(create_emp=@create OR @create='')
+		]]>
+    </sqltemplate>
+<!--    添加入库单-->
+    <sqltemplate key="depotIn_insert">
+        <![CDATA[
+            INSERT INTO dbo.equi_in ( in_no ,store_code ,ven_code ,buyer,create_emp,create_date,state,maker)
+                           VALUES  ( ?,?,?,?,?,CONVERT(DATETIME,?),?,?)
+		]]>
+    </sqltemplate>
+<!--    删除入库单-->
+    <sqltemplate key="depotIn_delete">
+        <![CDATA[
+        DECLARE @in_no NVARCHAR(20)
+        SET @in_no = ?
+        delete from equi_in_detail where in_no=@in_no
+	    delete from equi_in where in_no=@in_no
+		]]>
+    </sqltemplate>
+<!--    审核-->
+    <sqltemplate key="depotIn_audit">
+        <![CDATA[
+         DECLARE @in_no NVARCHAR(20)
+         DECLARE @audit_emp NVARCHAR(20)
+         SET @in_no = ?
+         SET @audit_emp = ?
+         IF EXISTS(SELECT 1 FROM dbo.equi_in_detail WHERE in_no=@in_no)
+         BEGIN
+			update equi_in set state=1,audit_emp=@audit_emp  where in_no=@in_no
+		 END
+		]]>
+    </sqltemplate>
+<!--    消审-->
+    <sqltemplate key="depotIn_remove">
+        <![CDATA[
+			update equi_in set state=2 where in_no=?
+		]]>
+    </sqltemplate>
+<!--    生成卡片-->
+    <sqltemplate key="depotIn_create_card">
+        <![CDATA[
+			DECLARE @in_no NVARCHAR(20)
+            SET @in_no = ?
+            DECLARE @card_no NVARCHAR(20)
+
+            DECLARE @equi_code NVARCHAR(20)
+            DECLARE @money_source TINYINT
+            DECLARE @price MONEY
+            DECLARE @amount INT
+            DECLARE @detail_id INT
+            DECLARE cur CURSOR
+            FOR
+              SELECT detail_id,equi_code,money_source,in_price,in_amount FROM dbo.equi_in_detail WHERE in_no=@in_no
+            OPEN cur
+            FETCH NEXT FROM cur INTO @detail_id,@equi_code,@money_source,@price,@amount
+            WHILE(@@FETCH_STATUS=0)
+                BEGIN
+                    DECLARE @i INT
+                    SET @i=0
+                    WHILE @i<@amount
+                    BEGIN
+                        SELECT @card_no= MAX(card_no) FROM dbo.equi_card
+                        IF @card_no IS NULL SET @card_no='kp10010001'
+                        ELSE
+                        BEGIN
+                            SET @card_no=SUBSTRING(@card_no,3,10)
+                            SET @card_no=CONVERT(INT,@card_no)+1
+                            SET @card_no='kp'+@card_no
+                        END
+                        INSERT INTO dbo.equi_card( card_no ,equi_code ,ven_code ,store_code ,in_date ,price ,money_source ,prin_emp ,state ,in_no )
+                        SELECT @card_no,equi_code,ven_code,store_code,create_date,in_price,money_source,buyer,0,@in_no
+                        FROM dbo.equi_in_detail LEFT JOIN dbo.equi_in ON equi_in.in_no = equi_in_detail.in_no
+                        WHERE equi_in_detail.detail_id=@detail_id
+                        SET @i+=1
+                    END
+                    FETCH NEXT FROM cur INTO @detail_id,@equi_code,@money_source,@price,@amount
+                END
+            CLOSE cur
+            DEALLOCATE cur
+            UPDATE dbo.equi_in SET state=3 WHERE in_no=@in_no
+		]]>
+    </sqltemplate>
+
+
+
+<!--    详情页查询-->
+    <sqltemplate key="depotIn_detail_select">
+        <![CDATA[
+			SELECT detail_id,equi_name,in_price,in_amount,unit_name,maker
+            FROM dbo.equi_in_detail
+            LEFT JOIN dbo.equi_dict  ON equi_dict.equi_code = equi_in_detail.equi_code
+            LEFT JOIN dbo.sys_unit ON sys_unit.unit_code = equi_dict.unit_code
+            WHERE in_no=?
+		]]>
+    </sqltemplate>
+
+<!--    详情页添加-->
+    <sqltemplate key="depotIn_detail_insert">
+        <![CDATA[
+			  INSERT INTO dbo.equi_in_detail ( in_no,equi_code,money_source,in_price ,in_amount,maker) VALUES (?, ?,?, ?,?,?)
+		]]>
+    </sqltemplate>
+
+<!--    详情页删除-->
+    <sqltemplate key="depotIn_detail_delete">
+        <![CDATA[
+        declare @detail_id int
+        set @detail_id = ?
+        delete from equi_in_detail where detail_id = @detail_id or @detail_id = ''
+		]]>
+    </sqltemplate>
+</template>

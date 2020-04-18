@@ -1,0 +1,36 @@
+<component name="libraryTable">
+  <library name="Spring MVC">
+    <CLASSES>
+      <root url="jar://G:/ProgramFiles/IDEA/jar包/jstl/jstl-1.2.jar!/" />
+      <root url="jar://G:/ProgramFiles/IDEA/jar包/spring/aopalliance-1.0.jar!/" />
+      <root url="jar://G:/ProgramFiles/IDEA/jar包/spring/commons-logging-1.2.jar!/" />
+      <root url="jar://G:/ProgramFiles/IDEA/jar包/spring/spring-aspects-4.3.18.RELEASE.jar!/" />
+      <root url="jar://G:/ProgramFiles/IDEA/jar包/spring/spring-aop-4.3.18.RELEASE.jar!/" />
+      <root url="jar://G:/ProgramFiles/IDEA/jar包/spring/spring-beans-4.3.18.RELEASE.jar!/" />
+      <root url="jar://G:/ProgramFiles/IDEA/jar包/spring/spring-context-4.3.18.RELEASE.jar!/" />
+      <root url="jar://G:/ProgramFiles/IDEA/jar包/spring/spring-core-4.3.18.RELEASE.jar!/" />
+      <root url="jar://G:/ProgramFiles/IDEA/jar包/spring/spring-expression-4.3.18.RELEASE.jar!/" />
+      <root url="jar://G:/ProgramFiles/IDEA/jar包/spring/spring-jdbc-4.3.18.RELEASE.jar!/" />
+      <root url="jar://G:/ProgramFiles/IDEA/jar包/spring/spring-messaging-4.3.18.RELEASE.jar!/" />
+      <root url="jar://G:/ProgramFiles/IDEA/jar包/spring/spring-test-4.3.18.RELEASE.jar!/" />
+      <root url="jar://G:/ProgramFiles/IDEA/jar包/spring/spring-tx-4.3.18.RELEASE.jar!/" />
+      <root url="jar://G:/ProgramFiles/IDEA/jar包/springmvc/spring-web-4.3.18.RELEASE.jar!/" />
+      <root url="jar://G:/ProgramFiles/IDEA/jar包/springmvc/spring-webmvc-4.3.18.RELEASE.jar!/" />
+      <root url="jar://G:/ProgramFiles/IDEA/jar包/C3P0/mchange-commons-java-0.2.12.jar!/" />
+      <root url="jar://G:/ProgramFiles/IDEA/jar包/C3P0/c3p0-0.9.5.2.jar!/" />
+      <root url="jar://G:/ProgramFiles/IDEA/jar包/sqlserver/sqljdbc42.jar!/" />
+      <root url="jar://G:/ProgramFiles/IDEA/jar包/dmo4j/dom4j-1.6.1.jar!/" />
+      <root url="jar://G:/ProgramFiles/IDEA/jar包/dmo4j/jaxen-1.1-beta-7.jar!/" />
+      <root url="jar://G:/ProgramFiles/IDEA/jar包/DBUtils/commons-dbutils-1.7.jar!/" />
+      <root url="jar://G:/ProgramFiles/IDEA/jar包/BeanUtils/commons-beanutils-1.9.3.jar!/" />
+      <root url="jar://G:/ProgramFiles/apache-tomcat-7.0.93-windows-x64/apache-tomcat-7.0.93/lib/jasper.jar!/" />
+      <root url="jar://G:/ProgramFiles/apache-tomcat-7.0.93-windows-x64/apache-tomcat-7.0.93/lib/servlet-api.jar!/" />
+      <root url="jar://G:/ProgramFiles/apache-tomcat-7.0.93-windows-x64/apache-tomcat-7.0.93/lib/jsp-api.jar!/" />
+      <root url="jar://G:/ProgramFiles/IDEA/jar包/jackson-all-2.8.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://G:/ProgramFiles/IDEA/jar包/C3P0/c3p0-0.9.5.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

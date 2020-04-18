@@ -1,0 +1,4 @@
+user=sa
+password=yuan123hao
+jdbcurl=jdbc:sqlserver://localhost:1433;databaseName=hospital
+driverClass=com.microsoft.sqlserver.jdbc.SQLServerDriver

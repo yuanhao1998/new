@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template>
+    <sqltemplate key="select">
+        <![CDATA[
+            DECLARE @bdate DATETIME
+            DECLARE @edate DATETIME
+            DECLARE @card_no NVARCHAR(20)
+            DECLARE @equi_code NVARCHAR(20)
+            DECLARE @vendor NVARCHAR(20)
+            DECLARE @store NVARCHAR(20)
+            DECLARE @state TINYINT
+            DECLARE @equi_type NVARCHAR(20)
+            DECLARE @prin_emp NVARCHAR(20)
+            SET @bdate=?
+            SET @edate=?
+            SET @card_no=?
+            SET @equi_code = ?
+            SET @vendor = ?
+            SET @store = ?
+            SET @state = ?
+            SET @equi_type = ?
+            SET @prin_emp = ?
+            SELECT card_no,equi_card.equi_code,equi_name,ven_name,store_name,in_date,prin_emp,
+                   CASE state WHEN 0 THEN '在库' WHEN 1 THEN '退库' WHEN 2 THEN '科室领用' WHEN 3  THEN '已处置' END  AS state
+             FROM dbo.equi_card
+             LEFT JOIN dbo.equi_dict ON equi_dict.equi_code = equi_card.equi_code
+             LEFT JOIN dbo.sys_vendor ON sys_vendor.ven_code = equi_card.ven_code
+             LEFT JOIN dbo.sys_store ON sys_store.store_code = equi_card.store_code
+             WHERE ((in_date BETWEEN @bdate AND @edate)OR(@bdate='' AND in_date <= CONVERT(DATETIME,@edate))OR(@edate=''AND in_date>=CONVERT(DATETIME,@bdate)))
+                AND (card_no=@card_no OR @card_no='')
+               AND (equi_card.equi_code=@equi_code OR @equi_code = '') AND (equi_card.ven_code=@vendor OR @vendor ='')AND
+               (equi_card.store_code=@store OR @store='') AND (state=@state OR @state='') AND (equi_type_code = @equi_type OR @equi_type='')AND
+               (prin_emp=@prin_emp OR @prin_emp='')
+    	]]>
+    </sqltemplate>
+</template>

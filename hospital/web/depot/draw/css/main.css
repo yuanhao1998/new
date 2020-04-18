@@ -1,0 +1,37 @@
+html,body{
+    height: 100%;
+    padding: 0px;margin: 0px;
+}
+
+#select{
+    position: relative;
+    float: right;
+    top: 60px;
+    right: 500px;
+}
+
+.title{
+    position:relative;
+    left:22px;
+    line-height: 35px;
+    background-color: lightskyblue;
+}
+
+.title tr td{
+    width: 149px;
+    text-align: center;
+    font-size: 20px;
+}
+
+.data{
+    line-height: 30px;
+    border-color: #006cc3;
+    border-collapse:collapse;
+}
+.data tr td{
+    width:150px;
+    text-align: center;
+}
+
+
+

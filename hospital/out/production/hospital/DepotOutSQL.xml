@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template>
+
+    <sqltemplate key="depotOut_select">
+        <![CDATA[
+        DECLARE @bdate DATETIME
+        DECLARE @edate DATETIME
+        DECLARE @out_no NVARCHAR(20)
+        DECLARE @vendor NVARCHAR(20)
+        DECLARE @store NVARCHAR(20)
+        DECLARE @state TINYINT
+        DECLARE @create NVARCHAR(20)
+        SET @bdate = ?
+        SET @edate = ?
+        SET @out_no = ?
+        SET @vendor = ?
+        SET @store = ?
+        SET @state = ?
+        SET @create = ?
+        SELECT out_no,store_name,ven_name,out_emp,out_date,
+               CASE state WHEN 0 THEN '新建' WHEN 1 THEN '已审核' WHEN 2 THEN '消审'  END as state,audit_emp,out_reason
+        FROM dbo.equi_out
+            LEFT JOIN dbo.sys_store ON sys_store.store_code = equi_out.store_code
+            LEFT JOIN dbo.sys_vendor ON sys_vendor.ven_code = equi_out.ven_code
+        WHERE ((out_date BETWEEN @bdate AND @edate)OR(@bdate='' AND out_date < CONVERT(DATETIME,@edate))OR(@edate=''AND out_date>CONVERT(DATETIME,@bdate)))
+                  AND(out_no=@out_no OR @out_no='')AND (equi_out.ven_code=@vendor OR @vendor='')AND(equi_out.store_code=@store OR @store='')AND (state=@state OR @state='')
+                  AND(out_emp=@create OR @create='')
+    	]]>
+    </sqltemplate>
+
+    <sqltemplate key="depotOut_insert">
+        <![CDATA[
+                INSERT INTO dbo.equi_out
+                ( out_no ,
+                  out_date ,
+                  store_code ,
+                  ven_code ,
+                  out_emp ,
+                  out_reason ,
+                  state
+                )
+        VALUES (?,CONVERT(DATETIME,?),?,?,?,?,?)
+    	]]>
+    </sqltemplate>
+
+    <sqltemplate key="delete">
+        <![CDATA[
+        declare @out_no nvarchar(20)
+        set @out_no = ?
+        DELETE FROM dbo.equi_out WHERE out_no=@out_no
+    	]]>
+    </sqltemplate>
+
+    <sqltemplate key="audit">
+        <![CDATA[
+        DECLARE @audit_emp NVARCHAR(20)
+        DECLARE @out_no    NVARCHAR(20)
+        SET @audit_emp=?
+        SET @out_no=?
+        IF NOT EXISTS( SELECT * FROM (SELECT state FROM dbo.equi_card WHERE card_no IN (SELECT card_no FROM dbo.equi_out WHERE out_no=@out_no AND card_no IS NOT NULL)) a WHERE state!=0)
+        BEGIN
+        IF EXISTS(SELECT 1 FROM dbo.equi_out WHERE out_no=@out_no AND card_no IS NOT NULL)
+        BEGIN
+        UPDATE dbo.equi_out SET state=1,audit_emp=@audit_emp  WHERE out_no=@out_no
+        UPDATE dbo.equi_card SET state=1 WHERE card_no IN (SELECT card_no FROM dbo.equi_out WHERE out_no=@out_no AND card_no IS NOT NULL)
+        UPDATE dbo.equi_card SET out_no=@out_no WHERE card_no IN (SELECT card_no FROM dbo.equi_out WHERE out_no=@out_no AND card_no IS NOT NULL)
+        END
+        END
+    	]]>
+    </sqltemplate>
+
+    <sqltemplate key="remove">
+        <![CDATA[
+        DECLARE @out_no    NVARCHAR(20)
+        SET @out_no=?
+        UPDATE dbo.equi_out SET state=2  WHERE out_no=@out_no
+        UPDATE dbo.equi_card SET state=0 WHERE card_no IN (SELECT card_no FROM dbo.equi_out WHERE out_no=@out_no AND card_no IS NOT NULL)
+        update equi_card set out_no = null where out_no = @out_no
+    	]]>
+    </sqltemplate>
+
+    <sqltemplate key="detail_select">
+        <![CDATA[
+         DECLARE @out_no INT
+         SET @out_no = ?
+         SELECT out_no,store_code,ven_code INTO #temp FROM dbo.equi_out WHERE out_no=@out_no AND card_no IS NULL
+         SELECT dbo.equi_out.card_no,equi_name,store_name,unit_name,ven_name FROM dbo.equi_out
+                             LEFT JOIN dbo.equi_card ON equi_card.card_no = equi_out.card_no
+                             LEFT JOIN dbo.equi_dict ON equi_dict.equi_code = equi_card.equi_code
+                              LEFT JOIN #temp ON #temp.out_no = equi_out.out_no
+                             LEFT JOIN dbo.sys_store ON sys_store.store_code = #temp.store_code
+                             LEFT JOIN dbo.sys_unit ON sys_unit.unit_code = equi_dict.unit_code
+                             LEFT JOIN dbo.sys_vendor ON sys_vendor.ven_code = #temp.ven_code
+          WHERE dbo.equi_out.out_no=@out_no AND dbo.equi_out.card_no IS NOT NULL
+          DROP TABLE #temp
+
+    	]]>
+    </sqltemplate>
+    <sqltemplate key="detail_insert_select">
+        <![CDATA[
+          DECLARE @card_no NVARCHAR(40)
+          DECLARE @out_no  NVARCHAR(40)
+          SET @out_no=?
+          SET @card_no=?
+          SELECT card_no,equi_name,ven_name,store_name
+          FROM dbo.equi_card LEFT JOIN dbo.equi_dict ON equi_dict.equi_code = equi_card.equi_code
+                             LEFT JOIN dbo.sys_vendor ON sys_vendor.ven_code = equi_card.ven_code
+                             LEFT JOIN dbo.sys_store ON sys_store.store_code = equi_card.store_code
+          WHERE (card_no LIKE '%'+@card_no+'%' OR @card_no='' OR equi_name LIKE '%'+@card_no+'%')
+            AND card_no NOT IN (SELECT card_no FROM dbo.equi_out WHERE out_no=@out_no AND card_no IS NOT NULL)
+            AND dbo.equi_card.state=0
+            AND card_no IN (SELECT dbo.equi_card.card_no FROM dbo.equi_card,dbo.equi_out WHERE dbo.equi_out.store_code=dbo.equi_card.store_code AND dbo.equi_out.ven_code=dbo.equi_card.ven_code AND equi_out.out_no=@out_no)
+    	]]>
+    </sqltemplate>
+    <sqltemplate key="detail_insert">
+        <![CDATA[
+        INSERT INTO dbo.equi_out( out_no ,card_no ) VALUES  (?,?)
+    	]]>
+    </sqltemplate>
+    <sqltemplate key="detail_delete">
+        <![CDATA[
+          DELETE FROM dbo.equi_out WHERE card_no=?
+    	]]>
+    </sqltemplate>
+</template>

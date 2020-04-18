@@ -1,0 +1,16 @@
+html,body{height: 100%;margin: 0px;padding: 0px;}
+
+.login_main{width: 100%;height: 100%;background: url(../../images/bg.png);background-size: 100% 100%;}
+.login_login{width: 328px;height: 410px;position: absolute;left: 54%;top: 30%;border-radius: 10px;background-color: rgba(255,255,255,0.58);}
+.login_login table{width: 84%;height: 85%;margin: 25px;}
+
+#title{text-align: center;font-family: 微软雅黑;font-size: 18px;color: #646067;}
+
+.input{height: 42.3px;background:white;overflow:hidden;position:relative;}
+.title1{width: 25%;text-align: center;font-family: 微软雅黑;color:#7c7f81;font-size:14px;line-height: 42.3px;}
+.input div{float: left;height: 100%;}
+.input div input {height: 100%;width: 100%;border: 0px;}
+
+
+#login{display: block;width:100%;height: 42px;line-height: 42px;background: #007be0;text-align: center;color: white;text-decoration:none;font-size: 18px;}
+#login:hover{background: #006cc3;}

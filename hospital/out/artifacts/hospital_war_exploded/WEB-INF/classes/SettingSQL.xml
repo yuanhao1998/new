@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template>
+    <sqltemplate key="vendor_select">
+        <![CDATA[
+             DECLARE @name NVARCHAR(40)
+             DECLARE @code NVARCHAR(20)
+             DECLARE @type NVARCHAR(20)
+             SET @name = ?
+             SET @code = ?
+             SET @type = ?
+
+             SELECT ven_code,ven_name,ven_type_name FROM dbo.sys_vendor
+             LEFT JOIN dbo.sys_vendor_type ON sys_vendor_type.ven_type_code = sys_vendor.ven_type_code
+             WHERE  (ven_name=@name OR @name='') AND (ven_code=@code OR @code='') AND (sys_vendor.ven_type_code=@type OR @type='')
+    	]]>
+    </sqltemplate>
+
+    <sqltemplate key="vendor_insert">
+        <![CDATA[
+              INSERT INTO dbo.sys_vendor
+                            ( ven_code ,
+                              ven_name ,
+                              ven_type_code ,
+                              ven_address ,
+                              ven_postcode ,
+                              legal_person ,
+                              business_charter ,
+                              ven_bank ,
+                              ven_bank_account ,
+                              ven_phone ,
+                              is_stop
+                            )
+                    VALUES  (?,?,?,?,?,?,?,?,?,?,0)
+    	]]>
+    </sqltemplate>
+
+    <sqltemplate key="vendor_delete">
+        <![CDATA[
+               DELETE FROM dbo.sys_vendor WHERE ven_code  = ?
+    	]]>
+    </sqltemplate>
+
+    <sqltemplate key="vendor_detail_select">
+        <![CDATA[
+               SELECT ven_code,ven_name,ven_type_name,ven_address,ven_postcode,legal_person,business_charter,ven_bank,ven_bank_account,ven_phone,dbo.sys_vendor.is_stop
+               FROM dbo.sys_vendor LEFT JOIN dbo.sys_vendor_type ON dbo.sys_vendor.ven_type_code=dbo.sys_vendor_type.ven_type_code
+               WHERE ven_code = ?
+    	]]>
+    </sqltemplate>
+
+    <sqltemplate key="vendor_detail_update">
+        <![CDATA[
+              UPDATE dbo.sys_vendor SET ven_name=?,ven_address=?,ven_postcode=?,legal_person=?,business_charter=?,ven_bank=?,ven_bank_account=?,ven_phone=?,is_stop=? WHERE ven_code=?
+    	]]>
+    </sqltemplate>
+
+    <sqltemplate key="dept_select">
+        <![CDATA[
+               DECLARE @dept_code NVARCHAR(20)
+               DECLARE @dept_name NVARCHAR(40)
+               SET @dept_code = ?
+               SET @dept_name = ?
+               SELECT dept_code,dept_name,CASE is_stop WHEN 0 THEN '在用' WHEN 1 THEN '停用' END as is_stop  FROM dbo.sys_dept
+               WHERE (dept_code=@dept_code OR @dept_code='')AND(dept_name=@dept_name OR @dept_name='')
+    	]]>
+    </sqltemplate>
+
+    <sqltemplate key="dept_insert">
+        <![CDATA[
+               INSERT INTO dbo.sys_dept
+               ( dept_code ,
+                 dept_name ,
+                 spell ,
+                 dept_level ,
+                 super_code ,
+                 is_stop
+               )
+               VALUES  (?,?,?,?,?,0)
+    	]]>
+    </sqltemplate>
+
+    <sqltemplate key="dept_delete">
+        <![CDATA[
+               DELETE FROM dbo.sys_dept WHERE dept_code = ?
+    	]]>
+    </sqltemplate>
+    <sqltemplate key="equi_select">
+        <![CDATA[
+              DECLARE @equi_code NVARCHAR(20)
+              DECLARE @equi_name NVARCHAR(20)
+              DECLARE @equi_type_code NVARCHAR(20)
+              SET @equi_code=?
+              SET @equi_name=?
+              SET @equi_type_code=?
+              SELECT equi_code,equi_name,equi_type_name,unit_name,equi_model,CASE dbo.equi_dict.is_stop WHEN 0 THEN '在用' WHEN 1 THEN '停用' END AS is_stop FROM dbo.equi_dict
+              LEFT JOIN dbo.equi_type ON equi_type.equi_type_code = equi_dict.equi_type_code
+              LEFT JOIN dbo.sys_unit ON sys_unit.unit_code = equi_dict.unit_code
+              WHERE (equi_code=@equi_code OR @equi_code='')AND(equi_name=@equi_name OR @equi_name='')AND(equi_dict.equi_type_code=@equi_type_code OR @equi_type_code='')
+    	]]>
+    </sqltemplate>
+    <sqltemplate key="equi_insert">
+        <![CDATA[
+              INSERT INTO dbo.equi_dict
+                      ( equi_code ,
+                        equi_name ,
+                        spell ,
+                        equi_type_code ,
+                        unit_code ,
+                        equi_model ,
+                        is_stop
+                      )
+              VALUES  (?,?,?,?,?,?,0)
+    	]]>
+    </sqltemplate>
+    <sqltemplate key="equi_delete">
+        <![CDATA[
+              delete from equi_dict where equi_code = ?
+    	]]>
+    </sqltemplate>
+</template>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template>
+    <!--    查询提示信息-->
+    <sqltemplate key="get_tips">
+        <![CDATA[
+            select tips from sys_tips where user_code= ? or user_code = '999'
+    	]]>
+    </sqltemplate>
+</template>

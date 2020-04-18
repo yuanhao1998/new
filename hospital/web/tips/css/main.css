@@ -1,0 +1,11 @@
+html body{
+    height: 100%;
+    width: 100%;
+    padding: 0px;
+}
+.tips{
+    font-size: 30px;
+    color: red;
+    display: inline-block;
+    margin-left: 35%;
+}
